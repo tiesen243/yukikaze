@@ -1,8 +1,10 @@
 import "@yuki/tailwind-config/tailwind.css"
 
 import { Inter } from "next/font/google"
+import { ThemeProvider } from "next-themes"
 
 import { cn } from "@yuki/ui"
+import { Toaster } from "@yuki/ui/sonner"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
@@ -18,7 +20,12 @@ export const metadata = {
 
 const RootLayout: React.FC<React.PropsWithChildren> = ({ children }) => (
   <html lang="en" suppressHydrationWarning>
-    <body className={cn(inter.variable, "font-sans")}>{children}</body>
+    <body className={cn(inter.variable, "font-sans")}>
+      <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
+        {children}
+        <Toaster richColors />
+      </ThemeProvider>
+    </body>
   </html>
 )
 
