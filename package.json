@@ -12,8 +12,9 @@
     "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache",
     "typecheck": "turbo run typecheck",
     "ui-add": "turbo run ui-add",
-    "db:push": "turbo -F @yuki/db push",
-    "db:studio": "turbo -F @yuki/db studio"
+    "db:push": "turbo -F @yuki/db db:push",
+    "db:studio": "turbo -F @yuki/db db:studio",
+    "db:generate": "turbo -F @yuki/db db:generate"
   },
   "devDependencies": {
     "@turbo/gen": "^2.1.0",
