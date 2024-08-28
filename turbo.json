@@ -15,7 +15,7 @@
       "outputs": [".cache/tsbuildinfo.json"]
     },
     "format": {
-      "outputs": [".cache/.prettiercache"],
+            "outputs": [".cache/.prettiercache"],
       "outputLogs": "new-only"
     },
     "dev": {

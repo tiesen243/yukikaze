@@ -16,6 +16,7 @@
     "db:studio": "turbo -F @yuki/db studio"
   },
   "devDependencies": {
+    "@turbo/gen": "^2.1.0",
     "@yuki/prettier-config": "workspace:*",
     "prettier": "^3.3.3",
     "turbo": "^2.1.0",

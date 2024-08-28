@@ -1,45 +1,86 @@
-import { PlopTypes } from "@turbo/gen";
+import { execSync } from "node:child_process"
+import type { PlopTypes } from "@turbo/gen"
+
+interface PackageJson {
+  name: string
+  scripts: Record<string, string>
+  dependencies: Record<string, string>
+  devDependencies: Record<string, string>
+}
 
 export default function generator(plop: PlopTypes.NodePlopAPI): void {
-  plop.setGenerator("example", {
-    description:
-      "An example Turborepo generator - creates a new file at the root of the project",
+  plop.setGenerator("init", {
+    description: "Generate a new package for the Yuki Monorepo",
     prompts: [
       {
         type: "input",
-        name: "file",
-        message: "What is the name of the new file to create?",
-        validate: (input: string) => {
-          if (input.includes(".")) {
-            return "file name cannot include an extension";
-          }
-          if (input.includes(" ")) {
-            return "file name cannot include spaces";
-          }
-          if (!input) {
-            return "file name is required";
-          }
-          return true;
-        },
-      },
-      {
-        type: "list",
-        name: "type",
-        message: "What type of file should be created?",
-        choices: [".md", ".txt"],
+        name: "name",
+        message: "What is the name of the package? (You can skip the `@yuki/` prefix)",
       },
       {
         type: "input",
-        name: "title",
-        message: "What should be the title of the new file?",
+        name: "deps",
+        message: "Enter a space separated list of dependencies you would like to install",
       },
     ],
     actions: [
+      (answers) => {
+        if ("name" in answers && typeof answers.name === "string") {
+          if (answers.name.startsWith("@yuki/")) {
+            answers.name = answers.name.replace("@yuki/", "")
+          }
+        }
+        return "Config sanitized"
+      },
       {
         type: "add",
-        path: "{{ turbo.paths.root }}/{{ dashCase file }}{{ type }}",
-        templateFile: "templates/turborepo-generators.hbs",
+        path: "packages/{{ name }}/eslint.config.js",
+        templateFile: "templates/eslint.config.js.hbs",
+      },
+      {
+        type: "add",
+        path: "packages/{{ name }}/package.json",
+        templateFile: "templates/package.json.hbs",
+      },
+      {
+        type: "add",
+        path: "packages/{{ name }}/tsconfig.json",
+        templateFile: "templates/tsconfig.json.hbs",
+      },
+      {
+        type: "add",
+        path: "packages/{{ name }}/src/index.ts",
+        template: "export const name = '{{ name }}';",
+      },
+      {
+        type: "modify",
+        path: "packages/{{ name }}/package.json",
+        async transform(content, answers) {
+          if ("deps" in answers && typeof answers.deps === "string") {
+            const pkg = JSON.parse(content) as PackageJson
+            for (const dep of answers.deps.split(" ").filter(Boolean)) {
+              const version = await fetch(`https://registry.npmjs.org/-/package/${dep}/dist-tags`)
+                .then((res) => res.json())
+                .then((json) => json.latest)
+              if (!pkg.dependencies) pkg.dependencies = {}
+              pkg.dependencies[dep] = `^${version}`
+            }
+            return JSON.stringify(pkg, null, 2)
+          }
+          return content
+        },
+      },
+      async (answers) => {
+        /**
+         * Install deps and format everything
+         */
+        if ("name" in answers && typeof answers.name === "string") {
+          execSync("bun i", { stdio: "inherit" })
+          execSync(`bun prettier --write packages/${answers.name}/** --list-different`)
+          return "Package scaffolded"
+        }
+        return "Package not scaffolded"
       },
     ],
-  });
+  })
 }
