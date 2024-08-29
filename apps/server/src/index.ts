@@ -1,29 +1,25 @@
-import { createElysia } from "@/lib/elysia"
-import { postRouter } from "@/routes/post"
+import cors from "@elysiajs/cors"
 import swagger from "@elysiajs/swagger"
 
-const app = createElysia()
+import { createElysia } from "./lib/elysia"
+import { postRouter } from "./routes/post"
+
+const app = createElysia({ prefix: "/api" })
   .use(
     swagger({
       path: "/docs",
-      provider: "scalar",
-      documentation: {
-        info: {
-          title: "Yukikaze API",
-          version: "1.0.0",
-          description: "Yukikaze API Documentation",
-          contact: {
-            name: "tiesen243",
-            url: "https://tiesen.id.vn",
-          },
-        },
-      },
+      documentation: { tags: [{ name: "post", description: "Post operations" }] },
     }),
   )
+  .use(cors())
+  .get("/health", () => {
+    return { status: "ok" }
+  })
   .use(postRouter)
+  .compile()
 
 app.listen(3001, () => {
   console.log("Server is running on port 3001")
 })
 
-export { app }
+export type App = typeof app

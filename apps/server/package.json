@@ -16,8 +16,9 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@yuki/db": "workspace:*",
+    "@elysiajs/cors": "^1.1.0",
     "@elysiajs/swagger": "^1.1.1",
+    "@yuki/db": "workspace:*",
     "elysia": "^1.1.9"
   },
   "devDependencies": {

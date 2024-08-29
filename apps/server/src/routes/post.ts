@@ -1,14 +1,19 @@
-import { createElysia } from "@/lib/elysia"
 import { t } from "elysia"
 
-export const postRouter = createElysia({ prefix: "/post", name: "post.router" })
-  .get("/getAll", async ({ db }) => {
-    const posts = await db.post.findMany()
-    return {
-      message: "Get all posts",
-      posts,
-    }
-  })
+import { createElysia } from "../lib/elysia"
+
+export const postRouter = createElysia({ prefix: "/post", name: "post.router", tags: ["post"] })
+  .get(
+    "/getAll",
+    async ({ db }) => {
+      const posts = await db.post.findMany()
+
+      return posts
+    },
+    {
+      response: t.Array(t.Object({ id: t.String(), title: t.String(), content: t.String() })),
+    },
+  )
 
   .post(
     "/create",
