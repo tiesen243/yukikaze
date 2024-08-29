@@ -1,8 +1,11 @@
+import { fileURLToPath } from "url"
+import createJiti from "jiti"
+
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
  * for Docker builds.
  */
-await import("./env.js")
+createJiti(fileURLToPath(import.meta.url))("./env")
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

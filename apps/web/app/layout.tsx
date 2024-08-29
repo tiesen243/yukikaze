@@ -1,9 +1,8 @@
 import "@yuki/tailwind-config/tailwind.css"
 
 import { Inter } from "next/font/google"
-import { ThemeProvider } from "next-themes"
 
-import { cn } from "@yuki/ui"
+import { cn, ThemeProvider } from "@yuki/ui"
 import { Toaster } from "@yuki/ui/sonner"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
